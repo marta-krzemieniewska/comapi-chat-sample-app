@@ -1,30 +1,19 @@
 import { Injectable } from '@angular/core';
-
-import { Subject, Observable, from, of } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { AuthService } from './auth.service';
-
 import { Foundation, ComapiConfig, ConversationBuilder, MessageBuilder, IAuthChallengeOptions } from '@comapi/sdk-js-foundation';
-
 import { AppSettings } from './app.settings';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class ChatSdkService {
 
   private comapiSDK: Foundation;
   private comapiConfig: ComapiConfig;
 
-  /**
-   * Subjects to channel Comapi events into
-   */
-  private participantAddedSubject = new Subject();
-  private participantRemovedSubject = new Subject();
-  private conversationMessageSubject = new Subject();
-  private conversationDeletedSubject = new Subject();
-
   constructor(private authService: AuthService) {
-
     this.comapiConfig = new ComapiConfig()
       .withApiSpace(AppSettings.API_SPACE_ID)
       .withUrlBase(AppSettings.URL_BASE)
@@ -56,7 +45,7 @@ export class ChatSdkService {
       return this.comapiSDK;
     }
     try {
-      const sdk: Foundation =  await Foundation.initialise(this.comapiConfig);
+      const sdk: Foundation = await Foundation.initialise(this.comapiConfig);
       console.log('sdk: ', sdk);
       this.comapiSDK = sdk;
 
@@ -78,7 +67,7 @@ export class ChatSdkService {
     );
   }
 
-  public initialise(): Observable < Foundation > {
+  public initialise(): Observable<Foundation> {
     return from(this.getSdk());
   }
 
@@ -88,7 +77,7 @@ export class ChatSdkService {
     return await sdk.services.appMessaging.createConversation(conversation);
   }
 
-  public createConversation(name: string, users: [string]): Observable <any> {
+  public createConversation(name: string, users: [string]): Observable<any> {
     return from(this.createConversationSDK(name, users));
   }
 
@@ -97,7 +86,7 @@ export class ChatSdkService {
     return await sdk.services.appMessaging.getConversations();
   }
 
-  public getConversations(): Observable <[]> {
+  public getConversations(): Observable<[]> {
     return from(this.getConversationsSDK());
   }
 
@@ -108,7 +97,7 @@ export class ChatSdkService {
     return await sdk.services.appMessaging.sendMessageToConversation(conversationId, message);
   }
 
-  public sendMessageToConversation(conversationId: string, text: string): Observable <[]> {
+  public sendMessageToConversation(conversationId: string, text: string): Observable<[]> {
     return from(this.sendMessageToConversationSDK(conversationId, text));
   }
 
@@ -117,7 +106,7 @@ export class ChatSdkService {
     return await sdk.services.appMessaging.getMessages(conversationId, AppSettings.MESSAGE_PAGE_SIZE);
   }
 
-  public getMessages(conversationId: string): Observable <{messages: []}> {
+  public getMessages(conversationId: string): Observable<{ messages: [] }> {
     return from(this.getMessagesSDK(conversationId));
   }
 

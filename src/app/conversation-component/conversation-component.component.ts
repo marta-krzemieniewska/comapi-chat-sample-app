@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ChatSdkService } from '../chat-sdk.service';
 import { ActivatedRoute } from '@angular/router';
-import{IConversationMessageEvent} from '@comapi/sdk-js-foundation';
+import { IConversationMessageEvent } from '@comapi/sdk-js-foundation';
 
 
 @Component({
@@ -31,6 +31,7 @@ export class ConversationComponentComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.params.subscribe(
       params => {
+        this.sdk.unSubscribeToEvent('conversationMessageEvent');
         this.conversationId = this.route.snapshot.paramMap.get('id');
         this.getMessages();
         this.sdk.subscribeToEvent('conversationMessageEvent', (e: IConversationMessageEvent) => {
@@ -52,7 +53,6 @@ export class ConversationComponentComponent implements OnInit, OnDestroy {
     this.sdk.sendMessageToConversation(this.conversationId, text)
       .subscribe(result => {
         this.messageText = '';
-        console.log(result);
       });
   }
 
