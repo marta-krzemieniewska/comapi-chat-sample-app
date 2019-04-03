@@ -2,17 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ChatSdkService } from '../chat-sdk.service';
 import { ActivatedRoute } from '@angular/router';
 import{IConversationMessageEvent} from '@comapi/sdk-js-foundation';
-function EventIsApplicable(e) {
-  return e.conversationId === this.conversationId;
-}
 
-function handleMessageSentEvent(e) {
-  const message = {
-    id: e.payload.messageId,
-    parts: e.payload.parts
-  };
-  this.messages.unshift(message);
-}
 
 @Component({
   selector: 'app-conversation-component',
@@ -23,7 +13,19 @@ function handleMessageSentEvent(e) {
 export class ConversationComponentComponent implements OnInit, OnDestroy {
   messages: any;
   conversationId: string;
+  messageText: string;
 
+  private handleMessageSentEvent(e) {
+    const message = {
+      id: e.payload.messageId,
+      parts: e.payload.parts
+    };
+    this.messages.unshift(message);
+  }
+
+  private EventIsApplicable(e) {
+    return e.conversationId === this.conversationId;
+  }
   constructor(private sdk: ChatSdkService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -33,10 +35,10 @@ export class ConversationComponentComponent implements OnInit, OnDestroy {
         this.getMessages();
         this.sdk.subscribeToEvent('conversationMessageEvent', (e: IConversationMessageEvent) => {
           console.log(e);
-          if (EventIsApplicable(e)) {
+          if (this.EventIsApplicable(e)) {
             switch (e.name) {
               case 'conversationMessage.sent':
-                handleMessageSentEvent(e);
+                this.handleMessageSentEvent(e);
                 break;
               default:
                 return;
@@ -49,6 +51,7 @@ export class ConversationComponentComponent implements OnInit, OnDestroy {
   sendMessage(text: string) {
     this.sdk.sendMessageToConversation(this.conversationId, text)
       .subscribe(result => {
+        this.messageText = '';
         console.log(result);
       });
   }
