@@ -1,0 +1,21 @@
+
+<h3>Messages</h3>
+
+<button (click)="getMessages()">Get Messages for Conversation</button>
+<br>
+<br>
+
+
+
+<ul>
+  <li *ngFor="let mess of messages">
+   
+    <!-- {{ mess.id }}  -->
+    <ul>
+      <li *ngFor="let part of mess.parts">{{ part.data }}</li>
+    </ul>
+    </li>
+</ul>
+
+<input type="text" [(ngModel)]="messageText"/>
+<button (click)="sendMessage(messageText)">Send Message</button>

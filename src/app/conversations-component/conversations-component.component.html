@@ -1,0 +1,15 @@
+<h3>Conversations</h3>
+<br>
+<button (click)="addConversation('test con',['sub','hehe'])">Create Conversation</button>
+<button (click)="getConversations()">Get Conversations</button>
+
+<ul>
+  <li *ngFor="let conv of conversations">
+<a routerLink="{{conv.id}}">
+  {{ conv.name + " | " + conv.id }}
+</a>
+
+  </li>
+</ul>
+
+<router-outlet></router-outlet>
